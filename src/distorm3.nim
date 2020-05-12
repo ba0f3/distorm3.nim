@@ -91,8 +91,8 @@ type
     operands*: WString
     instructionHex*: WString
 
-proc `$`(ws: WString): string = $cast[cstring](unsafeAddr ws.p[0])
-proc `$`(di: DecodedInst): string = $di.mnemonic & " " & $di.operands
+proc `$`*(ws: WString): string = $cast[cstring](unsafeAddr ws.p[0])
+proc `$`*(di: DecodedInst): string = $di.mnemonic & " " & $di.operands
 
 when hostCPU == "i386":
   proc distorm_decode*(codeOffset: uint, code: pointer, codeLen: int, dt: DecodeType, res: ptr DecodedInst, maxInstructions: uint, usedInstructionsCount: ptr int): DecodeResult {.importc: "distorm_decode32", cdecl.}
