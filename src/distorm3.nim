@@ -1,14 +1,16 @@
 when hostCPU == "i386":
   {.passC: "-DDISTORM_STATIC -include stdint.h".}
 
-{.compile: "src/private/distorm/src/decoder.c".}
-{.compile: "src/private/distorm/src/distorm.c".}
-{.compile: "src/private/distorm/src/instructions.c".}
-{.compile: "src/private/distorm/src/insts.c".}
-{.compile: "src/private/distorm/src/mnemonics.c".}
-{.compile: "src/private/distorm/src/operands.c".}
-{.compile: "src/private/distorm/src/prefix.c".}
-{.compile: "src/private/distorm/src/textdefs.c".}
+import os
+const PATH = currentSourcePath.splitPath.head
+{.compile: PATH & "/private/distorm/src/decoder.c".}
+{.compile: PATH & "/private/distorm/src/distorm.c".}
+{.compile: PATH & "/private/distorm/src/instructions.c".}
+{.compile: PATH & "/private/distorm/src/insts.c".}
+{.compile: PATH & "/private/distorm/src/mnemonics.c".}
+{.compile: PATH & "/private/distorm/src/operands.c".}
+{.compile: PATH & "/private/distorm/src/prefix.c".}
+{.compile: PATH & "/private/distorm/src/textdefs.c".}
 
 type
   DecodeType* = enum
