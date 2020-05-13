@@ -1,5 +1,8 @@
 when hostCPU == "i386":
   {.passC: "-DDISTORM_STATIC -include stdint.h".}
+  const SUFFIX = "32"
+else:
+  const SUFFIX = "64"
 
 import os
 const PATH = currentSourcePath.splitPath.head
@@ -25,6 +28,25 @@ type
     DECRES_INPUTERR
     DECRES_FILTERED
 
+  DecodeFeature* {.size: sizeof(int).} = enum
+    #Features for decompose
+    DF_NONE
+    DF_MAXIMUM_ADDR16
+    DF_MAXIMUM_ADDR32
+    DF_RETURN_FC_ONLY = 4
+    DF_STOP_ON_CALL = 8
+    DF_STOP_ON_RET = 0x10
+    DF_STOP_ON_SYS = 0x20
+    DF_STOP_ON_UNC_BRANCH = 0x40
+    DF_STOP_ON_CND_BRANCH = 0x80
+    DF_STOP_ON_INT = 0x100
+    DF_STOP_ON_CMOV = 0x200
+    DF_STOP_ON_HLT = 0x400
+    DF_STOP_ON_PRIVILEGED = 0x800
+    DF_SINGLE_BYTE_STEP = 0x1000
+    DF_FILL_EFLAGS = 0x2000
+    DF_USE_ADDR_MASK = 0x4000
+
   ValuePtr* {.bycopy.} = object
     seg*: uint16
     off*: uint32
@@ -37,10 +59,10 @@ type
     codeOffset*: uint
     addrMask*: uint
     nextOffset*: uint
-    code*: ptr uint8
-    codeLen*: cint
+    code*: pointer
+    codeLen*: int
     dt*: DecodeType
-    features*: cuint
+    features*: DecodeFeature
 
   Value* {.bycopy, union.} = object
     sbyte*: int8
@@ -94,23 +116,6 @@ type
 proc `$`*(ws: WString): string = $cast[cstring](unsafeAddr ws.p[0])
 proc `$`*(di: DecodedInst): string = $di.mnemonic & " " & $di.operands
 
-when hostCPU == "i386":
-  proc distorm_decode*(codeOffset: uint, code: pointer, codeLen: int, dt: DecodeType, res: ptr DecodedInst, maxInstructions: uint, usedInstructionsCount: ptr int): DecodeResult {.importc: "distorm_decode32", cdecl.}
-  proc distorm_format*(ci: ptr CodeInfo, di: ptr DInst, res: ptr DecodedInst) {.importc: "distorm_format32", cdecl.}
-else:
-  proc distorm_decode*(codeOffset: uint, code: pointer, codeLen: int, dt: DecodeType, res: ptr DecodedInst, maxInstructions: uint, usedInstructionsCount: ptr int): DecodeResult {.importc: "distorm_decode64", cdecl.}
-  proc distorm_format*(ci: ptr CodeInfo, di: ptr DInst, res: ptr DecodedInst) {.importc: "distorm_format64", cdecl.}
-
-when isMainModule:
-  var
-    res: DecodeResult
-    decodedInstructions: array[10, DecodedInst]
-    decodedInstructionsCount = 0
-    offset: uint = 0
-    buf = [byte 0xfd, 0xf3, 0xb8, 0x45, 0x49, 0x56, 0xed, 0xb3, 0x20, 0x0a, 0xc2, 0x7d, 0x90, 0x26, 0x5c, 0xc8]
-
-  res = distorm_decode(offset, addr buf, sizeof(buf), Decode32Bits, addr decodedInstructions[0], 10, addr decodedInstructionsCount)
-  if res == DECRES_SUCCESS:
-    for i in 0..<decodedInstructionsCount:
-      let ins = decodedInstructions[i]
-      echo ins
+proc distorm_decompose*(ci: ptr CodeInfo, res: ptr DInst, maxInstructions: uint, usedInstructionsCount: ptr int): DecodeResult {.importc: "distorm_decompose" & SUFFIX, cdecl.}
+proc distorm_decode*(codeOffset: uint, code: pointer, codeLen: int, dt: DecodeType, res: ptr DecodedInst, maxInstructions: uint, usedInstructionsCount: ptr int): DecodeResult {.importc: "distorm_decode" & SUFFIX, cdecl.}
+proc distorm_format*(ci: ptr CodeInfo, di: ptr DInst, res: ptr DecodedInst) {.importc: "distorm_format" & SUFFIX, cdecl.}
