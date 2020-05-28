@@ -2,7 +2,10 @@ when hostCPU == "i386":
   {.passC: "-DDISTORM_STATIC -include stdint.h".}
   const SUFFIX = "32"
 else:
+  {.passC: "-DSUPPORT_64BIT_OFFSET".}
   const SUFFIX = "64"
+
+import distorm3/mnemonics
 
 import os
 const PATH = currentSourcePath.splitPath.head
@@ -79,7 +82,7 @@ type
 
   Operand* {.bycopy.} = object
     kind*: uint8
-    index*: uint8
+    index*: RegisterType
     size*: uint16
 
   WString* {.bycopy.} = object
@@ -93,7 +96,7 @@ type
     flags*: uint16
     unusedPrefixesMask*: uint16
     usedRegistersMask*: uint32
-    opcode*: uint16
+    opcode*: InstructionType
     ops*: array[4, Operand]
     opsNo*: uint8
     size*: uint8

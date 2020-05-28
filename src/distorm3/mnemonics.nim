@@ -1,5 +1,5 @@
 type
-  InstructionType* = enum
+  InstructionType* {.size: 2.} = enum
     I_UNDEFINED = 0, I_ADD = 11, I_PUSH = 16, I_POP = 22, I_OR = 27, I_ADC = 31, I_SBB = 36,
     I_AND = 41, I_DAA = 46, I_SUB = 51, I_DAS = 56, I_XOR = 61, I_AAA = 66, I_CMP = 71, I_AAS = 76,
     I_INC = 81, I_DEC = 86, I_PUSHA = 91, I_POPA = 98, I_BOUND = 104, I_ARPL = 111, I_IMUL = 117,
