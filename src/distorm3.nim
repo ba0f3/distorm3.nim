@@ -119,6 +119,7 @@ type
 proc `$`*(ws: WString): string = $cast[cstring](unsafeAddr ws.p[0])
 proc `$`*(di: DecodedInst): string = $di.mnemonic & " " & $di.operands
 
-proc distorm_decompose*(ci: ptr CodeInfo, res: ptr DInst, maxInstructions: uint, usedInstructionsCount: ptr int): DecodeResult {.importc: "distorm_decompose" & SUFFIX, cdecl.}
-proc distorm_decode*(codeOffset: uint, code: pointer, codeLen: int, dt: DecodeType, res: ptr DecodedInst, maxInstructions: uint, usedInstructionsCount: ptr int): DecodeResult {.importc: "distorm_decode" & SUFFIX, cdecl.}
+proc distorm_decompose*(ci: ptr CodeInfo, res: ptr DInst, maxInstructions: uint32, usedInstructionsCount: ptr uint32): DecodeResult {.importc: "distorm_decompose" & SUFFIX, cdecl.}
+proc distorm_decode*(codeOffset: uint, code: pointer, codeLen: int32, dt: DecodeType, res: ptr DecodedInst, maxInstructions: uint32, usedInstructionsCount: ptr uint32): DecodeResult {.importc: "distorm_decode" & SUFFIX, cdecl.}
 proc distorm_format*(ci: ptr CodeInfo, di: ptr DInst, res: ptr DecodedInst) {.importc: "distorm_format" & SUFFIX, cdecl.}
+proc distorm_version*(): uint32 {.importc, cdecl.}
