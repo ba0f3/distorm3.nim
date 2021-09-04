@@ -9,6 +9,9 @@ import distorm3/mnemonics
 
 import os
 const PATH = currentSourcePath.splitPath.head
+
+{.passC: "-I " & PATH & "/private/distorm/include".}
+
 {.compile: PATH & "/private/distorm/src/decoder.c".}
 {.compile: PATH & "/private/distorm/src/distorm.c".}
 {.compile: PATH & "/private/distorm/src/instructions.c".}
