@@ -1,4 +1,6 @@
-# distorm3.nim
+# distorm3
+![Build Status (github)](https://github.com/ba0f3/distorm3.nim/workflows/Build/badge.svg) [![made-with-python](https://img.shields.io/badge/Made%20with-Nim-ffc200.svg)](https://nim-lang.org/)
+----------------
 distorm3 disassembler wrapper for Nim
 
 
